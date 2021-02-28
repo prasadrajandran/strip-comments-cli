@@ -1,6 +1,6 @@
 {
   "name": "@prasadrajandran/strip-comments-cli",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "description": "Strip comments from JavaScript files (and more) via the command line",
   "keywords": [
     "shell",
