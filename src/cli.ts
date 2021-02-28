@@ -68,7 +68,7 @@ import { schema } from './cli_schema';
   }
 
   // (4) STRIP COMMENTS
-  const writeMode = opts.has('-w') || opts.has('-write') || false;
+  const writeMode = opts.has('-w') || opts.has('--write') || false;
   const dryRun = opts.has('--dry-run');
   const overwriteConfirmed = opts.has('--confirm-overwrite');
   const destinationDir = (opts.get('-o') ||
