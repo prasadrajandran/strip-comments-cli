@@ -9,7 +9,6 @@ const schema: Schema = {
     { longName: '--keep-protected' },
     { longName: '--preserve-newlines' },
     { name: '-w', longName: '--write' },
-    { longName: '--dry-run' },
     {
       name: '-o',
       longName: '--out-dir',
@@ -22,6 +21,8 @@ const schema: Schema = {
         return destinationDir;
       },
     },
+    { longName: '--dry-run' },
+    { longName: '--confirm-overwrite' },
     { longName: '--version' },
     { longName: '--help' },
   ],

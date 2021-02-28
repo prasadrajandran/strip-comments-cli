@@ -70,6 +70,7 @@ import { schema } from './cli_schema';
   // (4) STRIP COMMENTS
   const writeMode = opts.has('-w') || opts.has('-write') || false;
   const dryRun = opts.has('--dry-run');
+  const overwriteConfirmed = opts.has('--confirm-overwrite');
   const destinationDir = (opts.get('-o') ||
     opts.get('--out-dir') ||
     '') as string;
@@ -160,7 +161,7 @@ import { schema } from './cli_schema';
   } else if (args.length) {
     let prompt: readline.Interface | null = null;
 
-    if (!dryRun && writeMode) {
+    if (!dryRun && writeMode && !overwriteConfirmed) {
       prompt = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
