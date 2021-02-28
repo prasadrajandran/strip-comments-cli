@@ -1,7 +1,17 @@
 {
   "name": "@prasadrajandran/strip-comments-cli",
   "version": "1.0.0-alpha.1",
-  "description": "Strip Comments CLI",
+  "description": "Strip comments from JavaScript files (and more) via the command line",
+  "keywords": [
+    "shell",
+    "cli",
+    "strip",
+    "remove",
+    "comments",
+    "block",
+    "line",
+    "pipe"
+  ],
   "homepage": "https://github.com/prasadrajandran/strip-comments-cli#readme",
   "bugs": {
     "url": "https://github.com/prasadrajandran/strip-comments-cli/issues"
