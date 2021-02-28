@@ -2,7 +2,7 @@
   "extends": "@tsconfig/node10/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true,
+    "declaration": false,
     "noEmitOnError": true,
     "newLine": "lf"
   },
