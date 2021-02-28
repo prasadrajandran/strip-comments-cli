@@ -1,11 +1,11 @@
 Usage: stripcomments [OPTION]... [FILE/GLOB]...
 
-If no FILE(s) are specified, it will default to stdin (if data is available).
+If no FILE(s) are specified, it will default to stdin (data is piped in).
 
 Strip comments from FILE(s) and:
 - print to stdout (default),
 - overwrite the FILE(s), or
-- save FILE(s) to another directory
+- write FILE(s) to another directory
 
 This is a CLI wrapper for "strip-comments" by Jon Schlinkert. Visit
 https://github.com/jonschlinkert/strip-comments for the full list of supported
@@ -15,19 +15,19 @@ For more information about the "strip-comments-cli", visit
 https://github.com/prasadrajandran/strip-comments-cli.
 
 OPTIONS:
--w, --write          Overwrite the FILE(s) or if -o=DIR is specified, write to
+-w, --write          Overwrite the FILE(s) or if -o=DIR is specified, write
                      stripped FILE(s) to DIR instead.
 
 -o, --out-dir=DIR    To be used together with -w, specify another directory to
                      write stripped FILE(s) to so that the original FILE(s) are
-                     unedited.
+                     left unedited.
 
 --dry-run            If used together with -w, print list of FILE(s) that would
                      have been stripped. If -o is also specified, the
-                     destination FILE(s) (separated by a comma) are included.
+                     destination FILE(s) (separated by a comma) are printed too.
 
 --confirm-overwrite  To be used together with -w, do not prompt for confirmation
-                     before overwritting a FILE(s). Use with caution!
+                     when overwritting FILE(s). Use with caution!
 
 --preserve-newlines  Preserve newlines after comments are stripped.
 
@@ -36,3 +36,7 @@ OPTIONS:
 --keep-block         Keep block comments.
 
 --keep-line          Keep line comments.
+
+--help               Print help.
+
+--version            Print version info.
