@@ -13,7 +13,7 @@ const schema: Schema = {
       name: '-o',
       longName: '--out-dir',
       arg: 'required',
-      argFilter: (v: string) => {
+      argFilter: (v: string): string => {
         const destinationDir = path.resolve(v);
         if (!lstatSync(destinationDir).isDirectory()) {
           throw new Error(`${destinationDir} is not a directory`);

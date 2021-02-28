@@ -53,7 +53,7 @@ import { schema } from './cli_schema';
     console.error(
       'stripcomments:\n' +
         errors
-          //@ts-ignore
+          // @ts-ignore
           .map(({ name, message, argFilterError }) => {
             let errMsg = `${name}: ${message}`;
             if (argFilterError) {
@@ -142,7 +142,6 @@ import { schema } from './cli_schema';
               }
             } catch (err) {
               console.error(`stripcomments: ${err}`);
-              return;
             }
           } else {
             write();
@@ -170,6 +169,7 @@ import { schema } from './cli_schema';
       confirmOverwrite = (query: string): Promise<string> => {
         return new Promise((resolve, reject) => {
           try {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             prompt.question(query, resolve);
           } catch (err) {
