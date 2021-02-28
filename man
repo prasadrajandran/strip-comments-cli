@@ -8,11 +8,11 @@ Strip comments from FILE(s) and:
 - write FILE(s) to another directory
 
 This is a CLI wrapper for "strip-comments" by Jon Schlinkert. Visit
-https://github.com/jonschlinkert/strip-comments for the full list of supported
-languages.
+https://github.com/jonschlinkert/strip-comments#readme for the full list of
+supported languages.
 
 For more information about the "strip-comments-cli", visit
-https://github.com/prasadrajandran/strip-comments-cli.
+https://github.com/prasadrajandran/strip-comments-cli#readme.
 
 OPTIONS:
 -w, --write          Overwrite the FILE(s) or if -o=DIR is specified, write
