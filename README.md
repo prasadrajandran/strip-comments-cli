@@ -2,13 +2,13 @@
 
 Strip comments from JavaScript files (and more). This is a CLI wrapper for
 "strip-comments" by Jon Schlinkert. For a full list of supported languages,
-please visit [strip-comments](https://github.com/jonschlinkert/strip-comments).
+please visit [strip-comments](https://github.com/jonschlinkert/strip-comments#readme).
 
 ## Highlights
 
-- Supports globbing patterns (via your shell)
+- Supports globbing patterns (via your shell):
   - `stripcomments ./dist/*.js ./src/*.ts`
-- Supports piping
+- Supports piping:
   - `cat source.js | stripcomments`
   - `cat source.js | stripcomments > source.stripped.js`
 - Print results to stdin, overwrite the files, or write the files to a
@@ -45,5 +45,5 @@ Note: this assumes that you're in the directory where the package is installed.
 
 ## Manual
 
-Have a look at the [man](https://raw.githubusercontent.com/prasadrajandran/strip-comments-cli/main/man?token=ABORJ4I46XB7RMRUMMMRMRTAHPG4Q)
+Have a look at the [man](https://raw.githubusercontent.com/prasadrajandran/strip-comments-cli/main/man)
 page for more information.
