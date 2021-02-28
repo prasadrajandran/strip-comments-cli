@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 
-# 1. Clear "dist" dir
+echo "1. Sort package.json"
+npx sort-package-json
+
+echo "2. Clear \"dist\" dir"
 rm -rf dist
 
-# 2. Build
+echo "3. Build"
 npm run build;
 
-# 3. Add hashbang to CLI
+echo "4. Add shebang to ./dist/cli.js"
 echo '#!/usr/bin/env node' | cat - ./dist/cli.js > temp && mv temp ./dist/cli.js
 
-# 4. Test
+echo "5. Test"
 npm test
 
-# 5. Run Prettier
+echo "6. Run Prettier"
 npm run prettier-fix
 
 package_version=`cat package.json | grep version`
