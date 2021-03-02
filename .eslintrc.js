@@ -18,4 +18,5 @@ module.exports = {
   rules: {
     'tsdoc/syntax': 'error',
   },
+  ignorePatterns: ['*.test.js'],
 };
