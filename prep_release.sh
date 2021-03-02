@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 
-echo "1. Sort package.json"
+echo "1. Run npm install"
+npm install
+
+echo "2. Sort package.json"
 npx sort-package-json
 
-echo "2. Clear \"dist\" dir"
+echo "3. Clear \"dist\" dir"
 rm -rf dist
 
-echo "3. Build"
+echo "4. Build"
 npm run build;
 
-echo "4. Add shebang to ./dist/cli.js"
+echo "5. Add shebang to ./dist/cli.js"
 echo '#!/usr/bin/env node' | cat - ./dist/cli.js > temp && mv temp ./dist/cli.js
 
-echo "5. Test"
+echo "6. Test"
 npm test
 
-echo "6. Run Prettier"
+echo "7. Run Prettier"
 npm run prettier-fix
 
 package_version=`cat package.json | grep version`
