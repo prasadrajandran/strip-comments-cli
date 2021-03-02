@@ -45,5 +45,5 @@ Note: this assumes that you're in the directory where the package is installed.
 
 ## Manual
 
-Have a look at the [man](https://raw.githubusercontent.com/prasadrajandran/strip-comments-cli/main/man)
+Have a look at the [man](https://raw.githubusercontent.com/prasadrajandran/strip-comments-cli/main/man.txt)
 page for more information.
