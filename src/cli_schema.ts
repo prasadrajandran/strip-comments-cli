@@ -1,6 +1,6 @@
 import { lstatSync } from 'fs';
 import path from 'path';
-import { Schema } from '@prasadrajandran/getopts/dist/interfaces/schema';
+import { Schema } from '@prasadrajandran/getopts';
 
 const schema: Schema = {
   opts: [
