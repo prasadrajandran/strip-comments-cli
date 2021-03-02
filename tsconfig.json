@@ -4,7 +4,8 @@
     "outDir": "dist",
     "declaration": false,
     "noEmitOnError": true,
-    "newLine": "lf"
+    "newLine": "lf",
+    "resolveJsonModule": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
