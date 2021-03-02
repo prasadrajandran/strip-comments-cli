@@ -5,16 +5,22 @@ import { performance } from 'perf_hooks';
 import strip from 'strip-comments';
 import { getopts } from '@prasadrajandran/getopts';
 import { schema } from './cli_schema';
+import man from './man.txt';
+import { EOL } from 'os';
+import {
+  name as depPackageName,
+  version as depPackageVersion,
+} from '../node_modules/strip-comments/package.json';
+import {
+  name as cliPackageName,
+  version as cliPackageVersion,
+} from '../package.json';
 
 (async () => {
   const { opts, args, errors } = getopts(schema);
   const encoding = 'utf-8';
 
   const printHelp = () => {
-    const man = readFileSync(path.resolve(__dirname, '../man'), {
-      encoding,
-      flag: 'r',
-    });
     console.info(man);
   };
 
@@ -26,43 +32,16 @@ import { schema } from './cli_schema';
 
   // (2) VERSION
   if (opts.has('--version')) {
-    const cliPkg = JSON.parse(
-      readFileSync(path.resolve(__dirname, '../package.json'), {
-        encoding,
-        flag: 'r',
-      }),
-    );
-
-    const depPkg = JSON.parse(
-      readFileSync(
-        path.resolve(__dirname, '../node_modules/strip-comments/package.json'),
-        {
-          encoding: 'utf-8',
-          flag: 'r',
-        },
-      ),
-    );
-
-    console.info(`${depPkg.name}: ${depPkg.version}`);
-    console.info(`${cliPkg.name}: ${cliPkg.version}`);
+    console.info(`${depPackageName}: ${depPackageVersion}`);
+    console.info(`${cliPackageName}: ${cliPackageVersion}`);
     return;
   }
 
   // (3) CLI ERRORS
   if (errors.length) {
     console.error(
-      'stripcomments:\n' +
-        errors
-          // @ts-ignore
-          .map(({ name, message, argFilterError }) => {
-            let errMsg = `${name}: ${message}`;
-            if (argFilterError) {
-              errMsg += `\n\t${argFilterError}`;
-            }
-
-            return errMsg;
-          })
-          .join('\n\n'),
+      `stripcomments:${EOL}` +
+        errors.map(({ name, message }) => `${name}: ${message}`).join(EOL),
     );
     return;
   }
@@ -187,7 +166,7 @@ import { schema } from './cli_schema';
       prompt.close();
     }
   } else {
-    console.error('stripcomments: no FILE(s) specified...\n');
+    console.error(`stripcomments: no FILE(s) specified...${EOL}`);
     printHelp();
   }
 })();
