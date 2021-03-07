@@ -1,9 +1,29 @@
 import { lstatSync } from 'fs';
 import path from 'path';
 import { Schema } from '@prasadrajandran/getopts';
+import {
+  SUPPORTED_LANGUAGES,
+  getLanguageType,
+} from './helpers/get_language_type';
 
 const schema: Schema = {
   opts: [
+    {
+      longName: '--language',
+      arg: 'required',
+      argFilter: (input: string): string => {
+        const language = getLanguageType(input);
+        if (language) {
+          return language;
+        }
+        throw new Error(
+          `"${input}" is not a supported language. ` +
+            `Please use one of the following: ` +
+            SUPPORTED_LANGUAGES.join(', '),
+        );
+      },
+    },
+    { longName: '--only-first' },
     { longName: '--keep-line' },
     { longName: '--keep-block' },
     { longName: '--keep-protected' },
