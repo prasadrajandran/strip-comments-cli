@@ -1,18 +1,11 @@
 Usage: stripcomments [OPTION]... [FILE/GLOB]...
 
-If no FILE(s) are specified, it will default to stdin (data is piped in).
+If no FILE(s) are specified, it will default to STDIN.
 
 Strip comments from FILE(s) and:
-- print to stdout (default),
+- print to STDOUT (default),
 - overwrite the FILE(s), or
 - write FILE(s) to another directory
-
-This is a CLI wrapper for "strip-comments" by Jon Schlinkert. Visit
-https://github.com/jonschlinkert/strip-comments#readme for the full list of
-supported languages.
-
-For more information about the "strip-comments-cli", visit
-https://github.com/prasadrajandran/strip-comments-cli#readme.
 
 OPTIONS:
 -w, --write          Overwrite the FILE(s) or if -o=DIR is specified, write
@@ -22,14 +15,24 @@ OPTIONS:
                      write stripped FILE(s) to so that the original FILE(s) are
                      left unedited.
 
+--language=LANGUAGE  Specify the LANGUAGE (case insensitive) of the FILE(s).
+                     JavaScript is the default if the LANGUAGE is not specified
+                     and if it cannot be inferred from the file extension of the
+                     FILE(s). The list of supported languages is specified at
+                     the bottom.
+
 --dry-run            If used together with -w, print list of FILE(s) that would
                      have been stripped. If -o is also specified, the
                      destination FILE(s) (separated by a comma) are printed too.
 
---confirm-overwrite  To be used together with -w, do not prompt for confirmation
-                     when overwritting FILE(s). Use with caution!
+--confirm-overwrite  To be used together with -w, confirm all overwrites
+                     without prompting. Use with caution!
 
 --preserve-newlines  Preserve newlines after comments are stripped.
+
+--only-first         Only remove the first comment. If used together with
+                     --keep-protected, only the first non-protected comment is
+                     removed.
 
 --keep-protected     Keep protected comments (e.g. /*! and //!).
 
@@ -40,3 +43,12 @@ OPTIONS:
 --help               Print help.
 
 --version            Print version info.
+
+SUPPORTED LANGUAGES:
+Ada, APL, AppleScript, C, C#, CSS, Hashbang, Haskell, HTML, Java, JavaScript,
+Less, Lua, MATLAB, OCaml, Pascal, Perl, PHP, Python, Ruby, Sass, Shebang, SQL,
+Swift, TypeScript, XML
+
+PACKAGE REPOSITORIES:
+strip-comments: https://github.com/jonschlinkert/strip-comments
+strip-comments-cli: https://github.com/prasadrajandran/strip-comments-cli
