@@ -1,10 +1,7 @@
 import { lstatSync } from 'fs';
 import path from 'path';
 import { Schema } from '@prasadrajandran/getopts';
-import {
-  SUPPORTED_LANGUAGES,
-  getLanguageType,
-} from './helpers/get_language_type';
+import { SUPPORTED_LANGUAGES, languageMapper } from './helpers/language_mapper';
 
 const schema: Schema = {
   opts: [
@@ -12,7 +9,7 @@ const schema: Schema = {
       longName: '--language',
       arg: 'required',
       argFilter: (input: string): string => {
-        const language = getLanguageType(input);
+        const language = languageMapper(input);
         if (language) {
           return language;
         }
