@@ -3,25 +3,38 @@ import readline from 'readline';
 import path from 'path';
 import { performance } from 'perf_hooks';
 import strip from 'strip-comments';
+import { EOL } from 'os';
 import { getopts } from '@prasadrajandran/getopts';
 import { schema } from './cli_schema';
 import man from './man.txt';
-import { EOL } from 'os';
 import {
   name as depPackageName,
   version as depPackageVersion,
-} from '../node_modules/strip-comments/package.json';
+} from 'strip-comments/package.json';
 import {
   name as cliPackageName,
   version as cliPackageVersion,
 } from '../package.json';
+import { languageMapper } from './helpers/language_mapper';
 
 (async () => {
   const { opts, args, errors } = getopts(schema);
   const encoding = 'utf-8';
 
+  const print = (msg: string) => {
+    if (msg[msg.length - 1] === '\n') {
+      process.stdout.write(msg);
+    } else {
+      console.log(msg);
+    }
+  };
+
   const printHelp = () => {
-    console.info(man);
+    process.stdout.write(man);
+  };
+
+  const printError = (msg: string) => {
+    console.error('\x1b[31m%s\x1b[0m', `stripcomments: ${msg}`);
   };
 
   // (1) HELP
@@ -32,80 +45,153 @@ import {
 
   // (2) VERSION
   if (opts.has('--version')) {
-    console.info(`${depPackageName}: ${depPackageVersion}`);
-    console.info(`${cliPackageName}: ${cliPackageVersion}`);
+    print(`${depPackageName}: ${depPackageVersion}`);
+    print(`${cliPackageName}: ${cliPackageVersion}`);
     return;
   }
 
   // (3) CLI ERRORS
   if (errors.length) {
-    console.error(
-      `stripcomments:${EOL}` +
-        errors.map(({ name, message }) => `${name}: ${message}`).join(EOL),
-    );
+    const errorMessages = errors
+      .map(({ name, message }) => `[${name}] ${message}`)
+      .join(EOL);
+    printError(`${EOL}${errorMessages}`);
     return;
   }
 
   // (4) STRIP COMMENTS
-  const writeMode = opts.has('-w') || opts.has('--write') || false;
-  const dryRun = opts.has('--dry-run');
-  const overwriteConfirmed = opts.has('--confirm-overwrite');
-  const destinationDir = (opts.get('-o') ||
-    opts.get('--out-dir') ||
-    '') as string;
-  const fromStdin = !args.length && !process.stdin.isTTY;
+  interface StripOptions {
+    keepProtected: boolean;
+    preserveNewlines: boolean;
+    language: string;
+  }
+
+  const { DATA_FROM_FILES, DATA_FROM_STDIN, STDIN_DATA } = (() => {
+    if (args.length) {
+      return { DATA_FROM_FILES: true, DATA_FROM_STDIN: false, STDIN_DATA: '' };
+    } else {
+      try {
+        return {
+          DATA_FROM_FILES: false,
+          DATA_FROM_STDIN: true,
+          STDIN_DATA: readFileSync(process.stdin.fd, { encoding }),
+        };
+      } catch (err) {
+        return {
+          DATA_FROM_FILES: false,
+          DATA_FROM_STDIN: false,
+          STDIN_DATA: '',
+        };
+      }
+    }
+  })();
+  const WRITE_MODE = opts.has('-w') || opts.has('--write');
+  const DRY_RUN = opts.has('--dry-run');
+  const OVERWRITE_CONFIRMED = opts.has('--confirm-overwrite');
+  const ONLY_FIRST = opts.has('--only-first');
+  const KEEP_LINE = opts.has('--keep-line');
+  const KEEP_BLOCK = opts.has('--keep-block');
+  const OUTPUT_DIR = (opts.get('-o') || opts.get('--out-dir') || '') as string;
+  const LANGUAGE_OPTION = (opts.get('--language') as string) || false;
+
+  if (!DATA_FROM_FILES && !DATA_FROM_STDIN) {
+    printError(`no FILE(s) specified...`);
+    printHelp();
+    return;
+  }
+
+  if (DATA_FROM_STDIN && WRITE_MODE) {
+    printError(`-w cannot be activated if data is from STDIN`);
+    return;
+  }
+
+  const getFileLanguage = (filename: string) => {
+    // (1) Explicitly set
+    if (LANGUAGE_OPTION) {
+      return LANGUAGE_OPTION;
+    }
+
+    // (2) Attempt to infer from file extension
+    if (DATA_FROM_FILES) {
+      const extension = path.basename(filename).split('.')[1] || '';
+      const language = languageMapper(extension);
+      if (language) {
+        return language;
+      }
+    }
+
+    // (3) All attempts to determine the language have failed, just presume it's
+    // JavaScript.
+    return 'javascript';
+  };
+
   let confirmOverwrite: ((query: string) => Promise<string>) | null = null;
 
   const stripComments = (() => {
-    const keepLine = opts.has('--keep-line');
-    const keepBlock = opts.has('--keep-block');
-    const options = {
-      keepProtected: opts.has('--keep-protected'),
-      preserveNewlines: opts.has('--preserve-newlines'),
-    };
-    if (!keepLine && !keepBlock) {
-      return (input: string) => strip(input, options);
-    } else if (keepLine && !keepBlock) {
-      return (input: string) => strip.block(input, options);
-    } else if (!keepLine && keepBlock) {
-      return (input: string) => strip.line(input, options);
+    let fn = null;
+
+    if (ONLY_FIRST) {
+      fn = (input: string, sOpts: StripOptions) => strip.first(input, sOpts);
+    } else if (!KEEP_LINE && !KEEP_BLOCK) {
+      fn = (input: string, sOpts: StripOptions) => strip(input, sOpts);
+    } else if (KEEP_LINE && !KEEP_BLOCK) {
+      fn = (input: string, sOpts: StripOptions) => strip.block(input, sOpts);
+    } else if (!KEEP_LINE && KEEP_BLOCK) {
+      fn = (input: string, sOpts: StripOptions) => strip.line(input, sOpts);
     } else {
-      return (input: string) => input;
+      fn = (input: string) => input;
     }
+
+    return fn;
   })();
 
-  const processData = (() => {
-    const stripAndMeasureTimeTaken = (filename: string) => {
-      const input = fromStdin
-        ? filename
-        : readFileSync(filename, { encoding, flag: 'r' });
-      let duration = performance.now();
-      const data = stripComments(input);
-      duration = performance.now() - duration;
-      return { duration: `${duration.toFixed(2)}ms`, data };
+  const stripCommentsAndMeasureTimeTaken = (filename: string) => {
+    const input = DATA_FROM_STDIN
+      ? filename
+      : readFileSync(filename, { encoding, flag: 'r' });
+
+    const stripOptions: StripOptions = {
+      keepProtected: opts.has('--keep-protected'),
+      preserveNewlines: opts.has('--preserve-newlines'),
+      language: getFileLanguage(filename),
     };
 
-    if (writeMode) {
-      return async (filename: string) => {
-        const destinationFilename = destinationDir
-          ? path.join(destinationDir, path.basename(filename))
+    let duration = performance.now();
+    const data = stripComments(input, stripOptions);
+    duration = performance.now() - duration;
+
+    return {
+      duration: `${duration.toFixed(2)}ms`,
+      data,
+      language: stripOptions.language,
+    };
+  };
+
+  const processData = (() => {
+    let fn = null;
+
+    if (WRITE_MODE && DATA_FROM_FILES) {
+      // WRITE TO FILES MODE
+      fn = async (filename: string) => {
+        const destinationFilename = OUTPUT_DIR
+          ? path.join(OUTPUT_DIR, path.basename(filename))
           : filename;
 
-        if (dryRun) {
+        if (DRY_RUN) {
           if (filename === destinationFilename) {
-            console.log(`${destinationFilename}`);
+            print(`${destinationFilename}`);
           } else {
-            console.log(`${filename}, ${destinationFilename}`);
+            print(`${filename}, ${destinationFilename}`);
           }
         } else {
-          const { duration, data } = stripAndMeasureTimeTaken(filename);
+          const { duration, data } = stripCommentsAndMeasureTimeTaken(filename);
 
           const write = () => {
             writeFileSync(destinationFilename, data, {
               encoding,
               flag: 'w',
             });
-            console.log(`${destinationFilename} ${duration}`);
+            print(`${destinationFilename} ${duration}`);
           };
 
           if (confirmOverwrite && existsSync(destinationFilename)) {
@@ -117,10 +203,10 @@ import {
               if (answer.match(/^y(es)?$/i)) {
                 write();
               } else {
-                console.log(`Skipped: ${filename}`);
+                print(`Skipped: ${filename}`);
               }
             } catch (err) {
-              console.error(`stripcomments: ${err}`);
+              printError(err);
             }
           } else {
             write();
@@ -128,18 +214,20 @@ import {
         }
       };
     } else {
-      return async (filename: string) => {
-        console.log(stripAndMeasureTimeTaken(filename).data);
+      // PRINT TO STDOUT MODE
+      fn = async (filename: string) => {
+        const { data } = stripCommentsAndMeasureTimeTaken(filename);
+        print(data);
       };
     }
+
+    return fn;
   })();
 
-  if (fromStdin) {
-    processData(readFileSync(process.stdin.fd, { encoding }));
-  } else if (args.length) {
+  if (DATA_FROM_FILES) {
     let prompt: readline.Interface | null = null;
 
-    if (!dryRun && writeMode && !overwriteConfirmed) {
+    if (!DRY_RUN && WRITE_MODE && !OVERWRITE_CONFIRMED) {
       prompt = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -165,8 +253,7 @@ import {
     if (prompt) {
       prompt.close();
     }
-  } else {
-    console.error(`stripcomments: no FILE(s) specified...${EOL}`);
-    printHelp();
+  } else if (DATA_FROM_STDIN) {
+    processData(STDIN_DATA);
   }
 })();
