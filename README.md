@@ -1,8 +1,9 @@
 # strip-comments-cli
 
-Strip comments from JavaScript files (and more). This is a CLI wrapper for
-"strip-comments" by Jon Schlinkert. For a full list of supported languages,
-please visit [strip-comments](https://github.com/jonschlinkert/strip-comments#readme).
+Strip comments from JavaScript, CSS, HTML, TypeScript, and more. This is a CLI
+wrapper for
+"[strip-comments](https://github.com/jonschlinkert/strip-comments#readme)" by
+Jon Schlinkert.
 
 ## Highlights
 
@@ -18,6 +19,9 @@ please visit [strip-comments](https://github.com/jonschlinkert/strip-comments#re
   - `stripcomments -wo ./out ./src/source.js`
 
 ## How Do I Use It?
+
+Have a look at the [man](https://raw.githubusercontent.com/prasadrajandran/strip-comments-cli/main/src/man.txt)
+page for more information.
 
 #### Globally
 
@@ -35,15 +39,7 @@ stripcomments [OPTION]... [FILE/GLOB]...
 npm i @prasadrajandran/strip-comments-cli
 ```
 
-###
 
 ```Shell
 npx stripcomments [OPTION]... [FILE/GLOB]...
 ```
-
-Note: this assumes that you're in the directory where the package is installed.
-
-## Manual
-
-Have a look at the [man](https://raw.githubusercontent.com/prasadrajandran/strip-comments-cli/main/src/man.txt)
-page for more information.
