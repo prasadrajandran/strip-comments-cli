@@ -39,7 +39,6 @@ stripcomments [OPTION]... [FILE/GLOB]...
 npm i @prasadrajandran/strip-comments-cli
 ```
 
-
 ```Shell
 npx stripcomments [OPTION]... [FILE/GLOB]...
 ```
