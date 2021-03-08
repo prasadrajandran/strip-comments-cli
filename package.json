@@ -1,6 +1,6 @@
 {
   "name": "@prasadrajandran/strip-comments-cli",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-beta.1",
   "description": "Strip comments from JavaScript, CSS, HTML, TypeScript, and more via the command line",
   "keywords": [
     "shell",
@@ -11,9 +11,13 @@
     "block",
     "line",
     "pipe",
-    "CSS",
-    "HTML",
-    "TypeScript"
+    "javascript",
+    "typescript",
+    "css",
+    "scss",
+    "less",
+    "html",
+    "xml"
   ],
   "homepage": "https://github.com/prasadrajandran/strip-comments-cli#readme",
   "bugs": {
